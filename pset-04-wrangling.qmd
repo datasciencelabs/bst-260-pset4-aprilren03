@@ -130,7 +130,9 @@ population |>
   facet_wrap(~year) +
   labs(x = "State names", 
        y = "Population size",
-       title = "Population size of the states (2021 and 2022)")
+       title = "Population size of the states (2021 and 2022)") +
+  theme(axis.text.y = element_text(size = 4),
+        axis.text.x = element_text(size = 5)) 
 ```
 
 8. The following URL:
@@ -178,7 +180,8 @@ head(population)
 ```
 
 
-10. From reading <https://data.cdc.gov/> we learn the endpoint `https://data.cdc.gov/resource/pwn4-m3yp.json` provides state level data from SARS-COV2 cases. Use the **httr2** tools you have learned to download this into a data frame. Is all the data there? If not, comment on why.
+10. From reading <https://data.cdc.gov/> we learn the endpoint 
+`https://data.cdc.gov/resource/pwn4-m3yp.json` provides state level data from SARS-COV2 cases. Use the **httr2** tools you have learned to download this into a data frame. Is all the data there? If not, comment on why.
 
 ```{r}
 api <- "https://data.cdc.gov/resource/pwn4-m3yp.json"
@@ -227,7 +230,8 @@ cases |>
   labs(x = "Time",
        y = "Num of cases per 100k", 
        title = "Number of cases per 100,000 versus time for each state") +
-  theme(axis.text.x = element_text(angle = 90, size = 6))
+  theme(axis.text.x = element_text(angle = 90, size = 6), 
+        legend.key.size = unit(0.3, "cm")) 
 ```
 
 13. The dates in the `cases` dataset are stored as character strings. Use the **lubridate** package to properly parse the `date` column, then create a summary table showing the total COVID-19 cases by month and year for 2020 and 2021. The table should have columns for year, month (as month name), and total cases across all states. Order by year and month. Use the **knitr** package and `kable()` function to display the results as a formatted table.
@@ -287,4 +291,5 @@ deaths |>
   labs(x = "State names", 
        y = "death counts",
        title = "Total COVID-19 deaths by state")
+
 ```
