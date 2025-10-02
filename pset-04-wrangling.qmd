@@ -18,7 +18,6 @@ Write a first line of code for your problem set that defines `census_key` by run
 
 
 ```{r}
-## Your code here
 census_key <- source("census-key.R")
 ```
 
@@ -55,7 +54,8 @@ request <- request(url) |>
 ```{r}
 library(readr)
 response <- request |>
-  req_perform() 
+  req_perform()
+resp_status(response)
 ```
 
 4. Use a function from the **httr2** package to determine the content type of your response.
@@ -68,7 +68,7 @@ resp_content_type(response)
 Hints: 1) Use the `resp_body_json` function. 2) The first row of the matrix will be the variable names and this OK as we will fix in the next exercise.
 
 ```{r}
-population <- resp_body_json(response, simplify = T) 
+population <- resp_body_json(response, simplifyVector = T) 
 ```
 
 6. Examine the `population` matrix you just created. Notice that 1) it is not tidy, 2) the column types are not what we want, and 3) the first row is a header. Convert `population` to a tidy dataset. Remove the state ID column and change the name of the column with state names to `state_name`. Add a column with state abbreviations called `state`. Make sure you assign the abbreviations for DC and PR correctly. Hint: Use the **janitor** package to make the first row the header. 
@@ -130,7 +130,7 @@ population |>
   facet_wrap(~year) +
   labs(x = "State names", 
        y = "Population size",
-       title = "Population size of the states (2021 and 2022)") +
+       title = "Population size of the states (2020 and 2021)") +
   theme(axis.text.y = element_text(size = 4),
         axis.text.x = element_text(size = 5)) 
 ```
@@ -220,13 +220,13 @@ head(cases_raw)
 ```{r, warning = F, message = F}
 cases <- cases_raw
 cases |>
-  filter(year(date) == c(2020, 2021)) |>
+  filter(year(date) %in% c(2020, 2021)) |>
   left_join(population, by = "state") |>
   na.omit() |>
   mutate(cases_per_100k = cases/population*100000) |>
   ggplot(aes(x= date, y = cases_per_100k, color = state)) +
   geom_line()+
-  facet_wrap(~region) + 
+  facet_wrap(~region_name) + 
   labs(x = "Time",
        y = "Num of cases per 100k", 
        title = "Number of cases per 100,000 versus time for each state") +
@@ -239,7 +239,7 @@ cases |>
 ```{r, message = F, warning = F}
 library(knitr)
 cases |>
-  filter(year(date) == c(2020, 2021)) |>
+  filter(year(date) %in% c(2020, 2021)) |>
   mutate (year = year(date),
         month = month(date)) |>
   group_by(year, month) |>
@@ -248,7 +248,11 @@ cases |>
   ) |>
   arrange(year, month) |>
   kable()
+
+
+
 ```
+
 
 14. The following URL provides additional COVID-19 data from the CDC in JSON format:
 
@@ -272,6 +276,7 @@ deaths <- request |>
          deaths = as.numeric(deaths)) |>
   na.omit() 
 ```
+
 
 
 15. Using the `deaths` dataset you created, make a bar plot showing the total COVID-19 deaths by state. Show only the top 10 states with the highest death counts. Order the bars from highest to lowest and use appropriate labels and title.
